@@ -57,7 +57,7 @@ end
 
 function init_abc_parallel_map(plan::abc_pmc_plan_type, ss_true)
   #num_param = length(Distributions.rand(plan.prior))
-  pmap_results = pmap(x->generate_theta(plan, plan.prior, ss_true, plan.epsilon_init), [1:plan.num_part])
+  pmap_results = pmap(x->generate_theta(plan, plan.prior, ss_true, plan.epsilon_init), collect(1:plan.num_part))
   @assert( length(pmap_results) >= 1)
   @assert( length(pmap_results[1]) >= 1)
   num_param = length(pmap_results[1][1])
@@ -84,7 +84,7 @@ function update_abc_pop_parallel(plan::abc_pmc_plan_type, ss_true, pop::abc_popu
   sampler = GaussianMixtureModelCommonCovar(pop.theta,pop.weights,tau)
 
   #zip(theta_star, dist_theta_star, attempts)
-  pmap_results = pmap(x->generate_theta(plan, sampler, ss_true, epsilon), [1:plan.num_part])
+  pmap_results = pmap(x->generate_theta(plan, sampler, ss_true, epsilon), collect(1:plan.num_part))
      for i in 1:plan.num_part
        #theta_star, dist_theta_star, attempts[i] = generate_theta(plan, sampler, ss_true, epsilon)
        # if dist_theta_star < pop.dist[i] # replace theta with new set of parameters and update weight
